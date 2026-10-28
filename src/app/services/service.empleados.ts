@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ServiceEmpleados {
@@ -8,34 +8,27 @@ export class ServiceEmpleados {
 
     constructor(private _http: HttpClient) {}
 
-    // 1. Petición para generar y obtener el Token
-    async login(usuario: string, password: string): Promise<any> {
+    // 1. Petición para loguearse y conseguir el Token
+    login(usuario: string, password: string): Observable<any> {
         let json = {
             userName: usuario,
             password: password
         };
-        return await firstValueFrom(this._http.post(this.urlApi + "Auth/Login", json));
+        return this._http.post(this.urlApi + "Auth/Login", json);
     }
 
-    // 2. Petición SEGURA para ver mi Perfil
-    async getPerfilEmpleado(): Promise<any> {
-        // Recuperamos el token del servidor (Session Storage)
+    // 2. Petición Autorizada para el Perfil
+    getPerfilEmpleado(): Observable<any> {
         let token = sessionStorage.getItem("token");
-        // Configuramos los Headers exigidos por la API
+        // Cabecera estricta exigida: "bearer TOKEN"
         let headers = new HttpHeaders().set("Authorization", "bearer " + token);
-        
-        return await firstValueFrom(
-            this._http.get(this.urlApi + "api/Empleados/PerfilEmpleado", { headers: headers })
-        );
+        return this._http.get(this.urlApi + "api/Empleados/PerfilEmpleado", { headers: headers });
     }
 
-    // 3. Petición SEGURA para ver mis Subordinados
-    async getSubordinados(): Promise<any> {
+    // 3. Petición Autorizada para los Subordinados
+    getSubordinados(): Observable<any> {
         let token = sessionStorage.getItem("token");
         let headers = new HttpHeaders().set("Authorization", "bearer " + token);
-        
-        return await firstValueFrom(
-            this._http.get(this.urlApi + "api/Empleados/Subordinados", { headers: headers })
-        );
+        return this._http.get(this.urlApi + "api/Empleados/Subordinados", { headers: headers });
     }
 }

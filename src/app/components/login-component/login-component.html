@@ -1,12 +1,15 @@
-<h1>Login Seguridad OAuth</h1>
-<h3 style="color: red">{{ mensaje }}</h3>
+<div>
+    <h1>Login Seguridad OAuth</h1>
+    <h3 style="color: red">{{ mensaje }}</h3>
 
-<form #formLogin="ngForm" >
-    <label>Usuario: </label>
-    <input type="text" name="cajausuario"  class="form-control" /><br/>
-    
-    <label>Password: </label>
-    <input type="password" name="cajapassword"  class="form-control" /><br/>
-    
-    <button (click)="realizarLogin()" class="btn btn-primary">Iniciar Sesión</button>
-</form>
+    <!-- ngForm bloquea la recarga de la página -->
+    <form #formLogin="ngForm" (ngSubmit)="realizarLogin()">
+        <label>Usuario: </label>
+        <input type="text" #cajausuario class="form-control" /><br/>
+        
+        <label>Password: </label>
+        <input type="password" #cajapassword class="form-control" /><br/>
+        
+        <button class="btn btn-primary">Iniciar Sesión</button>
+    </form>
+</div>

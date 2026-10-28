@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ServiceEmpleados } from '../../services/service.empleados';
 import { Router } from '@angular/router';
 
@@ -8,33 +8,32 @@ import { Router } from '@angular/router';
   styleUrl: './login-component.css',
   templateUrl: './login-component.html',
 })
-export class LoginComponent {
+export class LoginComponent {// Referencias a las cajas de texto
+  @ViewChild("cajausuario") cajaUsuarioRef!: ElementRef;
+  @ViewChild("cajapassword") cajaPasswordRef!: ElementRef;
   
-  public user:any;
-  public mensaje!:string;
+  public mensaje: string;
 
   constructor(
     private _service: ServiceEmpleados,
     private _router: Router
   ) {
     this.mensaje = "";
-    // Inicializamos el objeto para el Model Binding
-    this.user = {
-      userName: "",
-      password: ""
-    };
   }
 
   realizarLogin(): void {
-    this._service.login(this.user.userName, this.user.password)
-      .then((data: any) => {
-        // Guardamos el Token en el Session Storage
-        sessionStorage.setItem("token", data.token);
-        // Redirigimos a la página de Perfil
-        this._router.navigate(["/perfil"]);
-      })
-      .catch((error: any) => {
-        this.mensaje = "Usuario o contraseña incorrectos";
-      });
-  }
-}
+    let usuario = this.cajaUsuarioRef.nativeElement.value;
+    let password = this.cajaPasswordRef.nativeElement.value;
+
+    this._service.login(usuario, password).subscribe(
+      (res) => {
+        // Guardamos el token en el servidor (Session Storage)
+        sessionStorage.setItem("token", res.response);
+        // Redirigimos automáticamente al perfil
+        this._router.navigate(['/perfil']);
+      },
+      (error) => {
+        this.mensaje = "Credenciales incorrectas. Inténtalo de nuevo.";
+      }
+    );
+  }}

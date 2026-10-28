@@ -1,1 +1,14 @@
-<p>perfil-component works!</p>
+<div>
+    <h1>Mi Perfil</h1>
+    
+    <!-- Usamos @if para que no falle antes de llegar los datos -->
+    @if (empleado) {
+        <div class="card" style="width: 18rem;">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Apellido:</strong> {{ empleado.apellido }}</li>
+                <li class="list-group-item"><strong>Oficio:</strong> {{ empleado.oficio }}</li>
+                <li class="list-group-item"><strong>Salario:</strong> {{ empleado.salario }}</li>
+            </ul>
+        </div>
+    }
+</div>
