@@ -20,9 +20,8 @@ export class SubordinadosComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    if(sessionStorage.getItem("token")===null){
-    this._router.navigate(['/login']);
-  }else{
+    
+  
     this.subordinados=await this._service.getSubordinadosAsync();
     this._cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la vista
-  }}}
+  }}

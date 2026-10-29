@@ -21,9 +21,7 @@ export class PerfilComponent implements OnInit{
   }
 
  async  ngOnInit(): Promise<void> {
-  if(sessionStorage.getItem("token")===null){
-    this._router.navigate(['/login']);
-  }else{
+    
     this.empleado = await this._service.getEmpleadosAsync();
     this._cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la vista
-  }}}
+  }}
