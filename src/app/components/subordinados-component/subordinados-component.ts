@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Empleado, ServiceEmpleados } from '../../services/service.empleados';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-subordinados-component',
@@ -12,12 +13,16 @@ export class SubordinadosComponent implements OnInit {
   public mensaje = '';
 
   constructor(private _service: ServiceEmpleados,
-    private _cdr: ChangeDetectorRef
+    private _cdr: ChangeDetectorRef,
+    private _router: Router
   ) {
     this.subordinados = new Array<Empleado>;
   }
 
   async ngOnInit(): Promise<void> {
+    if(sessionStorage.getItem("token")===null){
+    this._router.navigate(['/login']);
+  }else{
     this.subordinados=await this._service.getSubordinadosAsync();
     this._cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la vista
-  }}
+  }}}
