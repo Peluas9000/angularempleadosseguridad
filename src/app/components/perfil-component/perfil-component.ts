@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Empleado, ServiceEmpleados } from '../../services/service.empleados';
 
 @Component({
@@ -12,13 +12,13 @@ export class PerfilComponent implements OnInit{
   public mensaje = '';
 
   // Ya no necesitamos inyectar el Router aquí porque no vamos a redirigir
-  constructor(private _service: ServiceEmpleados) {}
+  constructor(private _service: ServiceEmpleados,
+    private _cdr: ChangeDetectorRef
+  ) {
 
-  ngOnInit(): void {
-    // Como el Guard ya se ha asegurado de que haya Token para llegar hasta aquí,
-    // simplemente pedimos los datos directamente.
-    this._service.getPerfilEmpleado().subscribe({
-      next: (res) => this.empleado = res,
-      error: () => this.mensaje = 'No se han podido cargar los datos del perfil.'
-    });
+  }
+
+ async  ngOnInit(): Promise<void> {
+    this.empleado = await this._service.getEmpleadosAsync();
+    this._cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la vista
   }}

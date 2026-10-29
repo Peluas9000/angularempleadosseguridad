@@ -16,6 +16,5 @@ export class MenuComponent {
 
   logout(): void {
     sessionStorage.removeItem("token");
-    this._router.navigate(['/login']);
   }
 }

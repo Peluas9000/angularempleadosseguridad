@@ -1,6 +1,7 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ServiceEmpleados } from '../../services/service.empleados';
 import { Router } from '@angular/router';
+import { Login } from '../../models/login';
 
 @Component({
   selector: 'app-login-component',
@@ -8,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrl: './login-component.css',
   templateUrl: './login-component.html',
 })
-export class LoginComponent {// Referencias a las cajas de texto
+export class LoginComponent implements OnInit{// Referencias a las cajas de texto
   @ViewChild("cajausuario") cajaUsuarioRef!: ElementRef;
   @ViewChild("cajapassword") cajaPasswordRef!: ElementRef;
   
@@ -16,33 +17,25 @@ export class LoginComponent {// Referencias a las cajas de texto
 
   constructor(
     private _service: ServiceEmpleados,
-    private _router: Router
+    private _router: Router,
+    private _cdr: ChangeDetectorRef
   ) {
     this.mensaje = "";
   }
 
-  realizarLogin(): void {
+  ngOnInit(): void {}
+
+  async realizarLogin(): Promise<void> {
     let usuario = this.cajaUsuarioRef.nativeElement.value;
     let password = this.cajaPasswordRef.nativeElement.value;
+    let login=new Login(usuario,password);
+    let respuesta=await this._service.loginEmpleadoAsync(login);
+    this.mensaje=respuesta.response;
+    sessionStorage.setItem("token",respuesta.response);
+    this._cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la vista
+  }
+  
 
-    this.mensaje = "";
-    sessionStorage.removeItem("token");
 
-    this._service.login(usuario, password).subscribe(
-      (res) => {
-        // Esta API devuelve el JWT en la propiedad `response`.
-        const token = res?.response ?? res?.token;
 
-        if (!token) {
-          this.mensaje = "La respuesta del servidor no contiene un token válido.";
-          return;
-        }
-
-        sessionStorage.setItem("token", token);
-        this._router.navigate(['/perfil']);
-      },
-      (error) => {
-        this.mensaje = "Credenciales incorrectas. Inténtalo de nuevo.";
-      }
-    );
-  }}
+}

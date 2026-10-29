@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Empleado, ServiceEmpleados } from '../../services/service.empleados';
 
 @Component({
@@ -8,17 +8,16 @@ import { Empleado, ServiceEmpleados } from '../../services/service.empleados';
   templateUrl: './subordinados-component.html',
 })
 export class SubordinadosComponent implements OnInit {
-  public subordinados: Empleado[];
+  public subordinados:Array<Empleado>;
   public mensaje = '';
 
-  constructor(private _service: ServiceEmpleados) {
-    this.subordinados = [];
+  constructor(private _service: ServiceEmpleados,
+    private _cdr: ChangeDetectorRef
+  ) {
+    this.subordinados = new Array<Empleado>;
   }
 
-  ngOnInit(): void {
-    // Mismo caso: ruta protegida desde fuera, el componente solo consume la API.
-    this._service.getSubordinados().subscribe({
-      next: (res) => this.subordinados = res,
-      error: () => this.mensaje = 'No se han podido cargar los subordinados.'
-    });
+  async ngOnInit(): Promise<void> {
+    this.subordinados=await this._service.getSubordinadosAsync();
+    this._cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la vista
   }}

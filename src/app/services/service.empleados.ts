@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { firstValueFrom, map, Observable } from 'rxjs';
+import { Login } from '../models/login';
+
+export interface Empleado {
+    idEmpleado: number;
+    apellido: string;
+    oficio: string;
+    salario: number;
+    director: number;
+}
 
 @Injectable()
 export class ServiceEmpleados {
@@ -8,27 +17,30 @@ export class ServiceEmpleados {
 
     constructor(private _http: HttpClient) {}
 
-    // 1. Petición para loguearse y conseguir el Token
-    login(usuario: string, password: string): Observable<any> {
-        let json = {
-            userName: usuario,
-            password: password
-        };
-        return this._http.post(this.urlApi + "Auth/Login", json);
+    async loginEmpleadoAsync(user:Login) :Promise<any> {
+        let request="auth/login";
+        let json=JSON.stringify (user);
+
+        let header =new HttpHeaders().set("content-Type", "application/json");
+        return firstValueFrom(
+            this._http.post(this.urlApi+request,json,{headers:header}));
     }
 
-    // 2. Petición Autorizada para el Perfil
-    getPerfilEmpleado(): Observable<any> {
-        let token = sessionStorage.getItem("token");
-        // Cabecera estricta exigida: "bearer TOKEN"
-        let headers = new HttpHeaders().set("Authorization", "bearer " + token);
-        return this._http.get(this.urlApi + "api/Empleados/PerfilEmpleado", { headers: headers });
+    async getEmpleadosAsync(): Promise<Empleado> {
+        let request="/api/Empleados/PerfilEmpleado";
+        let token=sessionStorage.getItem("token");
+        let header =new HttpHeaders().set("content-Type", "application/json").set("Authorization","Bearer "+token);
+        return firstValueFrom(
+            this._http.get<Empleado>(this.urlApi+request,{headers:header}));
     }
 
-    // 3. Petición Autorizada para los Subordinados
-    getSubordinados(): Observable<any> {
-        let token = sessionStorage.getItem("token");
-        let headers = new HttpHeaders().set("Authorization", "bearer " + token);
-        return this._http.get(this.urlApi + "api/Empleados/Subordinados", { headers: headers });
-    }
+    async getSubordinadosAsync(): Promise<Empleado[]> {
+        let request="api/Empleados/subordinados";
+        let token=sessionStorage.getItem("token");
+        let header =new HttpHeaders().set("content-Type", "application/json").set("Authorization","Bearer "+token);
+        return firstValueFrom(
+            this._http.get<Empleado[]>(this.urlApi+request,{headers:header}));
+    }   
 }
+
+    
