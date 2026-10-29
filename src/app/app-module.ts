@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { ServiceEmpleados } from './services/service.empleados';
 import { AuthGuard } from './guards/auth-guard';
 import { EjemplosSignalComponent } from './components/ejemplos-signal-component/ejemplos-signal-component';
+import { ServiceAuthEmpleados } from './services/service.auth.empleados';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { EjemplosSignalComponent } from './components/ejemplos-signal-component/
     provideHttpClient(),
     ServiceEmpleados,
     AuthGuard,
+    ServiceAuthEmpleados
   ],
   bootstrap: [App],
 })

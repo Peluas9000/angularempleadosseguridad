@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@an
 import { ServiceEmpleados } from '../../services/service.empleados';
 import { Router } from '@angular/router';
 import { Login } from '../../models/login';
+import { ServiceAuthEmpleados } from '../../services/service.auth.empleados';
 
 @Component({
   selector: 'app-login-component',
@@ -18,7 +19,8 @@ export class LoginComponent implements OnInit{// Referencias a las cajas de text
   constructor(
     private _service: ServiceEmpleados,
     private _router: Router,
-    private _cdr: ChangeDetectorRef
+    private _cdr: ChangeDetectorRef,
+    private _serviceAuth:ServiceAuthEmpleados
   ) {
     this.mensaje = "";
   }
@@ -31,7 +33,7 @@ export class LoginComponent implements OnInit{// Referencias a las cajas de text
     let login=new Login(usuario,password);
     let respuesta=await this._service.loginEmpleadoAsync(login);
     this.mensaje=respuesta.response;
-    sessionStorage.setItem("token",respuesta.response);
+    await this._serviceAuth.almacenarEmpleado(respuesta.token);
     this._cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la vista
   }
   

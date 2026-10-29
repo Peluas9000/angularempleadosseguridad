@@ -22,8 +22,19 @@
           <a class="nav-link" [routerLink]="['/subordinados']">Subordinados</a>
         </li>
         <li>
-          <a class="nav-link" >Doble: {{ doble() }}</a>
+          <h1>
+            Contador:{{contador()}}
+          </h1>
         </li>
+        @if(usuario();as dato){
+          <h1 style="color: green">
+            {{dato.apellido}}
+          </h1>
+        }@else{
+          <h1 style="color: red">
+            Sin login
+          </h1>
+        }
        
       </ul>
       <button class="btn btn-outline-danger" type="button" (click)="logout()">Cerrar Sesión</button>
