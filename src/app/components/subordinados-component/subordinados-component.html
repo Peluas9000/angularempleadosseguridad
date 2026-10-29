@@ -1,5 +1,8 @@
 <div>
     <h1>Mis Subordinados</h1>
+    @if (mensaje) {
+        <p class="text-danger">{{ mensaje }}</p>
+    }
     
     <table class="table table-bordered table-striped">
         <thead>

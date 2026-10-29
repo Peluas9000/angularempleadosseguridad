@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ServiceEmpleados } from '../../services/service.empleados';
+import { Empleado, ServiceEmpleados } from '../../services/service.empleados';
 
 @Component({
   selector: 'app-perfil-component',
@@ -8,25 +7,18 @@ import { ServiceEmpleados } from '../../services/service.empleados';
   styleUrl: './perfil-component.css',
   templateUrl: './perfil-component.html',
 })
-export class PerfilComponent   {
+export class PerfilComponent implements OnInit{
+  public empleado?: Empleado;
+  public mensaje = '';
 
-  public empleado: any;
-
-  constructor(
-    private _service: ServiceEmpleados,
-    private _router: Router
-  ) {}
+  // Ya no necesitamos inyectar el Router aquí porque no vamos a redirigir
+  constructor(private _service: ServiceEmpleados) {}
 
   ngOnInit(): void {
-    let token = sessionStorage.getItem("token");
-
-    // PROTECCIÓN DE RUTA
-    if (token == null) {
-      this._router.navigate(['/login']);
-    } else {
-      this._service.getPerfilEmpleado().subscribe((res) => {
-        this.empleado = res;
-      });
-    }
-  }
-}
+    // Como el Guard ya se ha asegurado de que haya Token para llegar hasta aquí,
+    // simplemente pedimos los datos directamente.
+    this._service.getPerfilEmpleado().subscribe({
+      next: (res) => this.empleado = res,
+      error: () => this.mensaje = 'No se han podido cargar los datos del perfil.'
+    });
+  }}

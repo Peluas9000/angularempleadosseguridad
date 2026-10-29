@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ServiceEmpleados } from '../../services/service.empleados';
+import { Empleado, ServiceEmpleados } from '../../services/service.empleados';
 
 @Component({
   selector: 'app-subordinados-component',
@@ -8,24 +7,18 @@ import { ServiceEmpleados } from '../../services/service.empleados';
   styleUrl: './subordinados-component.css',
   templateUrl: './subordinados-component.html',
 })
-export class SubordinadosComponent implements OnInit {public subordinados: Array<any>;
+export class SubordinadosComponent implements OnInit {
+  public subordinados: Empleado[];
+  public mensaje = '';
 
-  constructor(
-    private _service: ServiceEmpleados,
-    private _router: Router
-  ) {
+  constructor(private _service: ServiceEmpleados) {
     this.subordinados = [];
   }
 
   ngOnInit(): void {
-    let token = sessionStorage.getItem("token");
-
-    // PROTECCIÓN DE RUTA
-    if (token == null) {
-      this._router.navigate(['/login']);
-    } else {
-      this._service.getSubordinados().subscribe((res) => {
-        this.subordinados = res;
-      });
-    }
+    // Mismo caso: ruta protegida desde fuera, el componente solo consume la API.
+    this._service.getSubordinados().subscribe({
+      next: (res) => this.subordinados = res,
+      error: () => this.mensaje = 'No se han podido cargar los subordinados.'
+    });
   }}

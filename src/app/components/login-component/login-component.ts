@@ -25,11 +25,20 @@ export class LoginComponent {// Referencias a las cajas de texto
     let usuario = this.cajaUsuarioRef.nativeElement.value;
     let password = this.cajaPasswordRef.nativeElement.value;
 
+    this.mensaje = "";
+    sessionStorage.removeItem("token");
+
     this._service.login(usuario, password).subscribe(
       (res) => {
-        // Guardamos el token en el servidor (Session Storage)
-        sessionStorage.setItem("token", res.response);
-        // Redirigimos automáticamente al perfil
+        // Esta API devuelve el JWT en la propiedad `response`.
+        const token = res?.response ?? res?.token;
+
+        if (!token) {
+          this.mensaje = "La respuesta del servidor no contiene un token válido.";
+          return;
+        }
+
+        sessionStorage.setItem("token", token);
         this._router.navigate(['/perfil']);
       },
       (error) => {
